@@ -17,7 +17,7 @@ This repository contains a Flask-based webhook server that listens for Prometheu
 
 ### 1. **Download the script**
 ```bash
-sudo curl https://raw.githubusercontent.com/YFanha/service_restarter/main/service_restarter -O /usr/bin/service_restarter
+sudo curl https://raw.githubusercontent.com/YFanha/service_restarter/main/service_restarter -o /usr/bin/service_restarter
 sudo chown restarter:restarter /usr/bin/service_restarter
 sudo chmod +x /usr/bin/service_restarter
 ```
