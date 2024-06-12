@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+from flask import Flask, request
+import subprocess
+import logging
+import yaml
+import re
+
+app = Flask(__name__)
+
+# Configure logging
+log_file = '/var/log/service_restarter.log'
+logging.basicConfig(filename=log_file, level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+@app.route('/', methods=['POST'])
+def webhook():
+    try:
+        data = request.json
+        data_labels = data['alerts'][0]['labels']
+        alertnames_file = "/etc/service_restarter/alertnames.yml"
+
+        logging.info('Received POST request with data: %s', data)
+
+        # Get List of alerts needing a restart
+        with open(alertnames_file, 'r') as stream:
+            list_service = yaml.safe_load(stream)
+
+        if data_labels['alertname'] in list_service['alertnames']:  
+            logging.info('Alert ' + data_labels['alertname'] + f' found in f{alertnames_file}')
+
+            service = data_labels['service']
+            instance = data_labels['instance']
+            ip_address = re.match(r'^(.*?):\d+$', instance).group(1)
+            
+            logging.info(f'Service {service} down on instance {ip_address}. Trying to restart..')
+
+            # Restart the service on the specified server
+            subprocess.run(['sudo', '-u', 'restarter', 'ssh', f'restarter@{ip_address}', f'sudo systemctl restart {service}'])
+            logging.info('MySQL service restarting on instance.. %s.', ip_address)
+        else:
+            logging.info(f'Alert not found in {alertnames_file}')
+    except Exception as e:
+        logging.error('An error occurred: %s', str(e))
+    return '', 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001)

@@ -1,0 +1,4 @@
+alertnames:
+  - MySQLDown
+  - Apache2Down
+  - NginxDown
