@@ -53,7 +53,7 @@ echo "<SSH_PUB_KEY>" | sudo tee -a /home/restarter/.ssh/authorized_keys
 ```
 
 ### 4. **Create alerts list :**
-Create the `alertnames.yml` configuration file at `/etc/service_restarter/alertnames.yml` with the alerts that should trigger a serice restart :
+Create the `alertnames.yml` configuration file at `/etc/service_restarter/alertnames.yml` with the alerts that should trigger a service restart :
 _An example can be found [here](https://raw.githubusercontent.com/YFanha/service_restarter/main/alertnames.yml.example)_
 ```bash
 sudo mkdir -p /etc/service_restarter
@@ -65,7 +65,7 @@ alertnames:
     - YourAlertName2
 ```
 
-5. **Create the service_restart.service file**
+### 5. **Create the service_restart.service file**
 ```bash
 cat <<EOM | sudo tee -a /etc/systemd/system/service_restarter.service
 [Unit]
@@ -80,6 +80,13 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 EOM
+```
+
+**Start and enable the service**
+```bash
+sudo systemctl enable service_restarter.service
+sudo systemctl start service_restarter.service
+sudo systemctl status service_restarter.service
 ```
 
 ### 6. **Configure the webhook in alertmanager.yml**
