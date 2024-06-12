@@ -25,7 +25,7 @@ def webhook():
             list_service = yaml.safe_load(stream)
 
         if data_labels['alertname'] in list_service['alertnames']:  
-            logging.info('Alert ' + data_labels['alertname'] + f' found in f{alertnames_file}')
+            logging.info('Alert ' + data_labels['alertname'] + f' found in {alertnames_file}')
 
             service = data_labels['service']
             instance = data_labels['instance']
